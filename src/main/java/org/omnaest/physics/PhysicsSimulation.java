@@ -15,6 +15,7 @@ import java.util.stream.Collectors;
 import org.omnaest.physics.domain.ForceProvider;
 import org.omnaest.physics.domain.Particle;
 import org.omnaest.physics.domain.Vector;
+import org.omnaest.physics.force.utils.DurationCapture;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
