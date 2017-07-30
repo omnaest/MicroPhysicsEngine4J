@@ -9,6 +9,7 @@ public class DistanceForceProvider implements ForceProvider
 	private Particle	particle1;
 	private Particle	particle2;
 	private double		distance;
+	protected double	strength	= 100.0;
 
 	public DistanceForceProvider(Particle particle1, Particle particle2, double distance)
 	{
@@ -45,7 +46,7 @@ public class DistanceForceProvider implements ForceProvider
 		}
 		delta = delta.multiply(particle == particle1 ? -1.0 : 1.0);
 		double absoluteDistanceDelta = distance - delta.absolute();
-		double multiplier = 100;// Math.pow(0.0001, 2);
+		double multiplier = this.strength;// Math.pow(0.0001, 2);
 		Vector force = delta.normVector()
 							.multiply(absoluteDistanceDelta)
 							.multiply(multiplier) //50

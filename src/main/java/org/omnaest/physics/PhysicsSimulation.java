@@ -3,6 +3,7 @@ package org.omnaest.physics;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.Set;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
@@ -62,22 +63,31 @@ public class PhysicsSimulation
 
 	public void tick()
 	{
-		this.forceProviders	.stream()
-							.forEach(forceProvider ->
-							{
-								List<Particle> matchedParticles = this.particles.stream()
-																				.filter(particle -> forceProvider.match(particle))
-																				.collect(Collectors.toList());
+		this.particles	.stream()
+						.forEach(particle ->
+						{
+							Set<ForceProvider> matchedForceProviders = this.forceProviders	.stream()
+																							.filter(forceProvider -> forceProvider.match(particle))
+																							.collect(Collectors.toSet());
 
-								matchedParticles.stream()
-												.forEach(particle ->
-												{
-													this.applyForce(particle, forceProvider);
-												});
-							});
+							this.applyForce(particle, matchedForceProviders);
+						});
+		//		this.forceProviders	.stream()
+		//							.forEach(forceProvider ->
+		//							{
+		//								List<Particle> matchedParticles = this.particles.stream()
+		//																				.filter(particle -> forceProvider.match(particle))
+		//																				.collect(Collectors.toList());
+		//
+		//								matchedParticles.stream()
+		//												.forEach(particle ->
+		//												{
+		//													this.applyForce(particle, forceProvider);
+		//												});
+		//							});
 	}
 
-	private void applyForce(Particle particle, ForceProvider forceProvider)
+	private void applyForce(Particle particle, Set<ForceProvider> forceProviders)
 	{
 
 		//
@@ -85,7 +95,10 @@ public class PhysicsSimulation
 		while (passedTime < 1.0)
 		{
 			//
-			Vector force = forceProvider.getForce(particle);
+			Vector force = forceProviders	.stream()
+											.map(forceProvider -> forceProvider.getForce(particle))
+											.reduce((f1, f2) -> f1.add(f2))
+											.get();
 
 			//identify timeScale
 			double timeScale = 1.0 - passedTime;
@@ -258,6 +271,6 @@ public class PhysicsSimulation
 									.filter(forceProvider -> forceProvider.match(particle))
 									.map(forceProvider -> forceProvider.getForce(particle))
 									.reduce((f1, f2) -> f1.add(f2))
-									.get();
+									.orElse(Vector.NULL);
 	}
 }
