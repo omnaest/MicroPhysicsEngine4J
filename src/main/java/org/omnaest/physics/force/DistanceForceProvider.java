@@ -1,3 +1,21 @@
+/*
+
+	Copyright 2017 Danny Kunz
+
+	Licensed under the Apache License, Version 2.0 (the "License");
+	you may not use this file except in compliance with the License.
+	You may obtain a copy of the License at
+
+		http://www.apache.org/licenses/LICENSE-2.0
+
+	Unless required by applicable law or agreed to in writing, software
+	distributed under the License is distributed on an "AS IS" BASIS,
+	WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+	See the License for the specific language governing permissions and
+	limitations under the License.
+
+
+*/
 package org.omnaest.physics.force;
 
 import org.omnaest.physics.domain.ForceProvider;
@@ -21,31 +39,31 @@ public class DistanceForceProvider implements ForceProvider
 
 	public Particle getParticle1()
 	{
-		return particle1;
+		return this.particle1;
 	}
 
 	public Particle getParticle2()
 	{
-		return particle2;
+		return this.particle2;
 	}
 
 	@Override
 	public boolean match(Particle particle)
 	{
-		return particle.equals(particle1) || particle.equals(particle2);
+		return particle.equals(this.particle1) || particle.equals(this.particle2);
 	}
 
 	@Override
 	public Vector getForce(Particle particle)
 	{
-		Vector delta = particle1.getLocation()
-								.subtract(particle2.getLocation());
+		Vector delta = this.particle1	.getLocation()
+										.subtract(this.particle2.getLocation());
 		if (delta.absolute() <= 0.001)
 		{
 			delta = new Vector(Math.random(), Math.random());
 		}
-		delta = delta.multiply(particle == particle1 ? -1.0 : 1.0);
-		double absoluteDistanceDelta = distance - delta.absolute();
+		delta = delta.multiply(particle == this.particle1 ? -1.0 : 1.0);
+		double absoluteDistanceDelta = this.distance - delta.absolute();
 		double multiplier = this.strength;// Math.pow(0.0001, 2);
 		Vector force = delta.normVector()
 							.multiply(absoluteDistanceDelta)

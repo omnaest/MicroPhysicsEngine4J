@@ -22,53 +22,59 @@ import org.omnaest.physics.domain.ForceProvider;
 import org.omnaest.physics.domain.Particle;
 import org.omnaest.physics.domain.Vector;
 
-public class PointForceProvider implements ForceProvider
+public class MinimalDistanceForceProvider implements ForceProvider
 {
-	private Particle	particle;
-	private Vector		location;
+	private Particle	particle1;
+	private Particle	particle2;
+	private double		distance;
+	protected double	strength	= 100.0;
 
-	public PointForceProvider(Particle particle, double x, double y)
+	public MinimalDistanceForceProvider(Particle particle1, Particle particle2, double distance)
 	{
 		super();
-		this.particle = particle;
-		this.location = new Vector(x, y);
+		this.particle1 = particle1;
+		this.particle2 = particle2;
+		this.distance = distance;
 	}
 
-	public Particle getParticle()
+	public Particle getParticle1()
 	{
-		return this.particle;
+		return this.particle1;
 	}
 
-	public Vector getLocation()
+	public Particle getParticle2()
 	{
-		return this.location;
-	}
-
-	public PointForceProvider setLocation(Vector location)
-	{
-		this.location = location;
-		return this;
+		return this.particle2;
 	}
 
 	@Override
 	public boolean match(Particle particle)
 	{
-		return this.particle.equals(particle);
+		return particle.equals(this.particle1) || particle.equals(this.particle2);
 	}
 
 	@Override
 	public Vector getForce(Particle particle)
 	{
-		Vector delta = particle	.getLocation()
-								.subtract(this.location);
+		Vector delta = this.particle1	.getLocation()
+										.subtract(this.particle2.getLocation());
 		if (delta.absolute() <= 0.001)
 		{
 			delta = new Vector(Math.random(), Math.random());
 		}
-		delta = delta.multiply(-1.0);
+		delta = delta.multiply(particle == this.particle1 ? -1.0 : 1.0);
+		double absoluteDistanceDelta = this.distance - delta.absolute();
+		double multiplier = this.strength;
+
+		if (delta.absolute() > this.distance)
+		{
+			multiplier = 0.0;
+		}
+
 		Vector force = delta.normVector()
-							.multiply(delta.absolute() * delta.absolute())
-							.multiply(0.9);
+							.multiply(absoluteDistanceDelta)
+							.multiply(multiplier) //50
+							.multiply(-1);
 		return force;
 	}
 }
