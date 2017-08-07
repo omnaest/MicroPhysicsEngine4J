@@ -35,15 +35,17 @@ public class Particle
 		return this.location.get();
 	}
 
-	public void setLocation(Vector location)
+	public Particle setLocation(Vector location)
 	{
 		this.location.set(location);
+		return this;
 	}
 
-	public void move(Vector distance)
+	public Particle move(Vector distance)
 	{
 		this.location.set(this.location	.get()
 										.add(distance));
+		return this;
 	}
 
 }

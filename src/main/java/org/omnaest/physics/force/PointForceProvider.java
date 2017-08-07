@@ -26,12 +26,19 @@ public class PointForceProvider implements ForceProvider
 {
 	private Particle	particle;
 	private Vector		location;
+	protected double	strength	= 0.9;
 
 	public PointForceProvider(Particle particle, double x, double y)
 	{
 		super();
 		this.particle = particle;
 		this.location = new Vector(x, y);
+	}
+
+	public PointForceProvider setStrength(double strength)
+	{
+		this.strength = strength;
+		return this;
 	}
 
 	public Particle getParticle()
@@ -68,7 +75,7 @@ public class PointForceProvider implements ForceProvider
 		delta = delta.multiply(-1.0);
 		Vector force = delta.normVector()
 							.multiply(delta.absolute() * delta.absolute())
-							.multiply(0.9);
+							.multiply(this.strength);
 		return force;
 	}
 }
