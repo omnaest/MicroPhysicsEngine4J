@@ -25,8 +25,8 @@ import java.util.Set;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
-import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicLong;
+import java.util.concurrent.atomic.AtomicReference;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 import java.util.stream.Collectors;
@@ -85,36 +85,29 @@ public class PhysicsSimulation
 
 	public void tick()
 	{
+		this.tick(1.0);
+	}
+
+	public void tick(double deltaT)
+	{
 		this.particles	.stream()
+						.parallel()
 						.forEach(particle ->
 						{
 							Set<ForceProvider> matchedForceProviders = this.forceProviders	.stream()
 																							.filter(forceProvider -> forceProvider.match(particle))
 																							.collect(Collectors.toSet());
 
-							this.applyForce(particle, matchedForceProviders);
+							this.applyForce(particle, matchedForceProviders, deltaT);
 						});
-		//		this.forceProviders	.stream()
-		//							.forEach(forceProvider ->
-		//							{
-		//								List<Particle> matchedParticles = this.particles.stream()
-		//																				.filter(particle -> forceProvider.match(particle))
-		//																				.collect(Collectors.toList());
-		//
-		//								matchedParticles.stream()
-		//												.forEach(particle ->
-		//												{
-		//													this.applyForce(particle, forceProvider);
-		//												});
-		//							});
 	}
 
-	private void applyForce(Particle particle, Set<ForceProvider> forceProviders)
+	private void applyForce(Particle particle, Set<ForceProvider> forceProviders, double deltaT)
 	{
 
 		//
 		double passedTime = 0.0;
-		while (passedTime < 1.0)
+		while (passedTime < deltaT * 0.9999)
 		{
 			//
 			Vector force = forceProviders	.stream()
@@ -123,13 +116,13 @@ public class PhysicsSimulation
 											.get();
 
 			//identify timeScale
-			double timeScale = 1.0 - passedTime;
+			double timeScale = deltaT - passedTime;
 			boolean correctTimeFrame = false;
 			do
 			{
 				double absoluteDistance = this	.calculateDistance(force, timeScale)
 												.absolute();
-				correctTimeFrame = absoluteDistance <= 1.0;
+				correctTimeFrame = absoluteDistance <= Math.max(1.0, 1.0 * deltaT);
 				if (!correctTimeFrame)
 				{
 					timeScale /= 2.0;
@@ -164,7 +157,7 @@ public class PhysicsSimulation
 
 		Runner awaitStop();
 
-		int getFPS();
+		double getFPS();
 
 	}
 
@@ -177,10 +170,10 @@ public class PhysicsSimulation
 	{
 		return new Runner()
 		{
-			private ExecutorService	executorService	= Executors.newCachedThreadPool();
-			private TimeTickHandler	timeTickHandler	= null;
-			private Lock			lock			= new ReentrantLock();
-			private AtomicInteger	fps				= new AtomicInteger();
+			private ExecutorService			executorService	= Executors.newCachedThreadPool();
+			private TimeTickHandler			timeTickHandler	= null;
+			private Lock					lock			= new ReentrantLock(true);
+			private AtomicReference<Double>	fps				= new AtomicReference<Double>(0.0);
 
 			@Override
 			public Runner setTimeTickHandler(TimeTickHandler timeTickHandler)
@@ -194,6 +187,9 @@ public class PhysicsSimulation
 			{
 				this.executorService.submit(new Runnable()
 				{
+					private final double	PIXEL_PER_SECOND		= 10;
+					private long			durationInMilliseconds	= 100;
+
 					@Override
 					public void run()
 					{
@@ -203,9 +199,10 @@ public class PhysicsSimulation
 						{
 							tickDurationCapture.start();
 							{
-								PhysicsSimulation.this.tick();
+								PhysicsSimulation.this.tick(Math.max(0.1, this.durationInMilliseconds) * this.PIXEL_PER_SECOND / 1000.0);
 							}
-							fps.set((int) (1000 / tickDurationCapture.stop()));
+							this.durationInMilliseconds = tickDurationCapture.stop();
+							fps.set((1000.0 / this.durationInMilliseconds));
 						} finally
 						{
 							lock.unlock();
@@ -280,7 +277,7 @@ public class PhysicsSimulation
 			}
 
 			@Override
-			public int getFPS()
+			public double getFPS()
 			{
 				return this.fps.get();
 			}
