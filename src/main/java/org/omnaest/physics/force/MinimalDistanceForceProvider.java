@@ -37,6 +37,12 @@ public class MinimalDistanceForceProvider implements ForceProvider
 		this.distance = distance;
 	}
 
+	public MinimalDistanceForceProvider setStrength(double strength)
+	{
+		this.strength = strength;
+		return this;
+	}
+
 	public Particle getParticle1()
 	{
 		return this.particle1;

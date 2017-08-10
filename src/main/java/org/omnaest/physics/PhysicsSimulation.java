@@ -107,7 +107,9 @@ public class PhysicsSimulation
 
 		//
 		double passedTime = 0.0;
-		while (passedTime < deltaT * 0.9999)
+		int depth = 0;
+		int maxDepth = 4;
+		while (passedTime < deltaT * 0.9999 && depth < maxDepth)
 		{
 			//
 			Vector force = forceProviders	.stream()
@@ -127,7 +129,7 @@ public class PhysicsSimulation
 				{
 					timeScale /= 2.0;
 				}
-			} while (!correctTimeFrame);
+			} while (!correctTimeFrame && depth < maxDepth);
 
 			//
 			Vector distance = this.calculateDistance(force, timeScale);
@@ -135,6 +137,7 @@ public class PhysicsSimulation
 
 			//
 			passedTime += timeScale;
+			depth++;
 		}
 
 	}
