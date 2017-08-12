@@ -20,6 +20,7 @@ package org.omnaest.physics;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.concurrent.ExecutorService;
@@ -46,7 +47,7 @@ public class PhysicsSimulation
 {
 	private static final Logger LOG = LoggerFactory.getLogger(PhysicsSimulation.class);
 
-	private List<Particle>		particles		= new ArrayList<>();
+	private Set<Particle>		particles		= new LinkedHashSet<>();
 	private List<ForceProvider>	forceProviders	= new ArrayList<>();
 
 	public PhysicsSimulation addParticle(Particle particle)
@@ -75,7 +76,7 @@ public class PhysicsSimulation
 
 	public List<Particle> getParticles()
 	{
-		return this.particles;
+		return new ArrayList<>(this.particles);
 	}
 
 	public List<ForceProvider> getForceProviders()

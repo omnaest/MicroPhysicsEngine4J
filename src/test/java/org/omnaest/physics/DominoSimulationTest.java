@@ -151,14 +151,14 @@ public class DominoSimulationTest
 		this.particles	.keySet()
 						.forEach(new Consumer<Particle>()
 						{
-							private Vector rotationVector = new Vector(1000, 0);
+							private Vector rotationVector = new Vector(1500, 0);
 
 							@Override
 							public void accept(Particle particle)
 							{
 								this.rotationVector = this.rotationVector.rotate(angle);
 								simulation.addForceProvider(new PointForceProvider(	particle, this.rotationVector.getX(),
-																					this.rotationVector.getY()).setStrength(0.1));
+																					this.rotationVector.getY()).setStrength(0.01));
 							}
 						});
 
@@ -232,7 +232,7 @@ public class DominoSimulationTest
 
 	private void initParticles()
 	{
-		for (int ii = 0; ii < 50; ii++)
+		for (int ii = 0; ii < 100; ii++)
 		{
 			this.particles.put(new Particle(), new HashSet<>());
 		}

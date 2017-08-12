@@ -66,14 +66,13 @@ public class DistanceForceProvider implements ForceProvider
 										.subtract(this.particle2.getLocation());
 		if (delta.absolute() <= 0.001)
 		{
-			delta = new Vector(Math.random(), Math.random());
+			delta = new Vector(Math.random(), Math.random()).divide(this.strength);
 		}
 		delta = delta.multiply(particle == this.particle1 ? -1.0 : 1.0);
-		double absoluteDistanceDelta = this.distance - delta.absolute();
-		double multiplier = this.strength;
+		double distanceToDistance = this.distance - delta.absolute();
 		Vector force = delta.normVector()
-							.multiply(absoluteDistanceDelta)
-							.multiply(multiplier) //50
+							.multiply(distanceToDistance)
+							.multiply(this.strength)
 							.multiply(-1);
 		return force;
 	}
