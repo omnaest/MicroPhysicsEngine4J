@@ -28,6 +28,11 @@ public class PointForceProvider implements ForceProvider
 	private Vector		location;
 	protected double	strength	= 0.9;
 
+	public PointForceProvider(double x, double y)
+	{
+		this(null, x, y);
+	}
+
 	public PointForceProvider(Particle particle, double x, double y)
 	{
 		super();
@@ -60,7 +65,7 @@ public class PointForceProvider implements ForceProvider
 	@Override
 	public boolean match(Particle particle)
 	{
-		return this.particle.equals(particle);
+		return this.particle == null || this.particle.equals(particle);
 	}
 
 	@Override
