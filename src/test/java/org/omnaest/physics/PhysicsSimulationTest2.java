@@ -83,8 +83,9 @@ public class PhysicsSimulationTest2
 				simulation.addForceProvider(new AntiCollisionForceProvider(particleOut2, 30));
 				simulation.addForceProvider(new AntiCollisionForceProvider(center, 30));
 
-				simulation.addForceProvider(new AntiCollisionForceProvider(center, 200).setExclusionParticles(	particleIn1, particleIn2, particleOut1,
-																												particleOut2));
+				simulation.addForceProvider(new AntiCollisionForceProvider(center, 200)	.setExclusionParticles(	particleIn1, particleIn2, particleOut1,
+																												particleOut2)
+																						.setStrength(1000));
 
 				simulation.addForceProvider(new DistanceForceProvider(center, particleIn1, 100));
 				simulation.addForceProvider(new DistanceForceProvider(center, particleIn2, 100));
@@ -165,6 +166,21 @@ public class PhysicsSimulationTest2
 										int y = (int) location.getY();
 										int r = 20;
 										drawer.add(new SVGCircle(x, y, r).setFillColor("yellow"));
+									}
+									else if (forceProvider instanceof AntiCollisionForceProvider)
+									{
+										AntiCollisionForceProvider antiCollisionForceProvider = (AntiCollisionForceProvider) forceProvider;
+										Vector location = antiCollisionForceProvider.getParticle()
+																					.getLocation()
+																					.add(origin);
+
+										int collisionDistance = antiCollisionForceProvider.getCollisionDistance();
+
+										int x = (int) location.getX();
+										int y = (int) location.getY();
+										int r = collisionDistance;
+										drawer.add(new SVGCircle(x, y, r)	.setStrokeColor("purple")
+																			.setFillOpacity(0.1));
 									}
 								});
 				}
