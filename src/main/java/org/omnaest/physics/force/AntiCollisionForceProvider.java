@@ -42,6 +42,11 @@ public class AntiCollisionForceProvider implements ForceProvider
 
 	}
 
+	public int getCollisionDistance()
+	{
+		return this.collisionDistance;
+	}
+
 	public AntiCollisionForceProvider setStrength(double strength)
 	{
 		this.strength = strength;
@@ -69,15 +74,16 @@ public class AntiCollisionForceProvider implements ForceProvider
 		{
 			delta = new Vector(Math.random(), Math.random()).divide(this.strength);
 		}
-		delta = delta.multiply(1.0);
 
 		if (distance > this.collisionDistance)
 		{
 			delta = delta.multiply(0);
 		}
 
+		double effectiveDistance = this.collisionDistance - distance;
+
 		Vector force = delta.normVector()
-							.multiply(distance * distance)
+							.multiply(effectiveDistance * effectiveDistance)
 							.multiply(this.strength);
 		return force;
 	}
