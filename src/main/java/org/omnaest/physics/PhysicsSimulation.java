@@ -161,6 +161,14 @@ public class PhysicsSimulation
 
 		Runner awaitStop();
 
+		/**
+		 * Sets the detail precision of the simulation. Defaults to 1.0
+		 *
+		 * @param precision
+		 * @return
+		 */
+		Runner setPrecision(double precision);
+
 		double getFPS();
 
 	}
@@ -177,7 +185,8 @@ public class PhysicsSimulation
 			private ExecutorService			executorService	= Executors.newCachedThreadPool();
 			private TimeTickHandler			timeTickHandler	= null;
 			private Lock					lock			= new ReentrantLock(true);
-			private AtomicReference<Double>	fps				= new AtomicReference<Double>(0.0);
+			private AtomicReference<Double>	fps				= new AtomicReference<>(0.0);
+			private double					precision;
 
 			@Override
 			public Runner setTimeTickHandler(TimeTickHandler timeTickHandler)
@@ -203,11 +212,13 @@ public class PhysicsSimulation
 						{
 							tickDurationCapture.start();
 							{
-								PhysicsSimulation.this.tick(Math.max(0.1, this.durationInMilliseconds) * this.PIXEL_PER_SECOND / 1000.0);
+								double timeDuration = Math.max(0.1, this.durationInMilliseconds) * precision * this.PIXEL_PER_SECOND / 1000.0;
+								PhysicsSimulation.this.tick(timeDuration);
 							}
 							this.durationInMilliseconds = tickDurationCapture.stop();
 							fps.set((1000.0 / this.durationInMilliseconds));
-						} finally
+						}
+						finally
 						{
 							lock.unlock();
 							executorService.submit(this);
@@ -229,10 +240,12 @@ public class PhysicsSimulation
 							try
 							{
 								timeTickHandler.handle(this.timeTicker.getAndIncrement(), PhysicsSimulation.this);
-							} catch (Exception e)
+							}
+							catch (Exception e)
 							{
 								LOG.error("Error during time tick handler execution", e);
-							} finally
+							}
+							finally
 							{
 								lock.unlock();
 							}
@@ -242,7 +255,8 @@ public class PhysicsSimulation
 							{
 								Thread.sleep(1);
 								executorService.submit(this);
-							} catch (InterruptedException e)
+							}
+							catch (InterruptedException e)
 							{
 							}
 						}
@@ -258,7 +272,8 @@ public class PhysicsSimulation
 				{
 					this.executorService.shutdown();
 					this.executorService.awaitTermination(2, TimeUnit.SECONDS);
-				} catch (InterruptedException e)
+				}
+				catch (InterruptedException e)
 				{
 				}
 				return this;
@@ -273,7 +288,8 @@ public class PhysicsSimulation
 					try
 					{
 						notTerminated = !this.executorService.awaitTermination(1, TimeUnit.SECONDS);
-					} catch (InterruptedException e)
+					}
+					catch (InterruptedException e)
 					{
 					}
 				}
@@ -284,6 +300,13 @@ public class PhysicsSimulation
 			public double getFPS()
 			{
 				return this.fps.get();
+			}
+
+			@Override
+			public Runner setPrecision(double precision)
+			{
+				this.precision = precision;
+				return this;
 			}
 		};
 	}
