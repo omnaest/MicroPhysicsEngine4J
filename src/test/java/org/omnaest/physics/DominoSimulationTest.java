@@ -156,7 +156,7 @@ public class DominoSimulationTest
 							@Override
 							public void accept(Particle particle)
 							{
-								this.rotationVector = this.rotationVector.rotate(angle);
+								this.rotationVector = this.rotationVector.rotateZ(angle);
 								simulation.addForceProvider(new PointForceProvider(	particle, this.rotationVector.getX(),
 																					this.rotationVector.getY()).setStrength(0.01));
 							}

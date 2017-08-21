@@ -1,4 +1,4 @@
-/* 
+/*
 
 	Copyright 2017 Danny Kunz
 
@@ -13,7 +13,7 @@
 	WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 	See the License for the specific language governing permissions and
 	limitations under the License.
-	
+
 
 */
 package org.omnaest.physics.domain;
@@ -44,7 +44,7 @@ public class Vector
 		this.coordinates = new double[] { x };
 	}
 
-	public Vector(double[] coordinates)
+	public Vector(double... coordinates)
 	{
 		super();
 		this.coordinates = coordinates;
@@ -135,16 +135,55 @@ public class Vector
 	 * @param angle
 	 * @return
 	 */
-	public Vector rotate(double angle)
+	public Vector rotateZ(double angle)
 	{
-		double alpha = angle / 180.0 * Math.PI;
-		double cosinusAlpha = Math.cos(alpha);
-		double sinusAlpha = Math.sin(alpha);
+		return this.rotate(0, 0, angle);
+	}
 
-		int x1 = (int) Math.round(this.getX() * cosinusAlpha - this.getY() * sinusAlpha);
-		int y1 = (int) Math.round(this.getX() * sinusAlpha + this.getY() * cosinusAlpha);
+	public Vector rotateY(double angle)
+	{
+		return this.rotate(0, angle, 0);
+	}
 
-		return new Vector(x1, y1);
+	public Vector rotateX(double angle)
+	{
+		return this.rotate(angle, 0, 0);
+	}
+
+	public Vector rotate(double angleX, double angleY, double angleZ)
+	{
+		int dimension = this.getDimension();
+		return this	.getRotationMatrixXY(angleZ)
+					.multiply(this.getRotationMatrixXZ(angleY))
+					.multiply(this.getRotationMatrixYZ(angleX))
+					.getSubMatrix(dimension, dimension)
+					.multiply(this);
+	}
+
+	private int getDimension()
+	{
+		return this.coordinates.length;
+	}
+
+	private Matrix getRotationMatrixXY(double angleZ)
+	{
+		double cos = Math.cos(angleZ / 180 * Math.PI);
+		double sin = Math.sin(angleZ / 180 * Math.PI);
+		return new Matrix(new double[][] { new double[] { cos, -sin, 0 }, new double[] { sin, cos, 0 }, new double[] { 0, 0, 1 } });
+	}
+
+	private Matrix getRotationMatrixYZ(double angleX)
+	{
+		double cos = Math.cos(angleX / 180 * Math.PI);
+		double sin = Math.sin(angleX / 180 * Math.PI);
+		return new Matrix(new double[][] { new double[] { 1, 0, 0 }, new double[] { 0, cos, sin }, new double[] { 0, -sin, cos } });
+	}
+
+	private Matrix getRotationMatrixXZ(double angleY)
+	{
+		double cos = Math.cos(angleY / 180 * Math.PI);
+		double sin = Math.sin(angleY / 180 * Math.PI);
+		return new Matrix(new double[][] { new double[] { cos, 0, -sin }, new double[] { 0, 1, 0 }, new double[] { sin, 0, cos } });
 	}
 
 	@Override
