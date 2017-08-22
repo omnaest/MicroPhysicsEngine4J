@@ -48,12 +48,18 @@ public class MatrixTest
 	{
 		Matrix matrixA = new Matrix(new double[] { 3, 2, 1 }, new double[] { 1, 0, 2 }, new double[] { 4, 4, 4 });
 
-		Matrix subMatrix = matrixA.getSubMatrix(2, 3);
+		Matrix subMatrix = matrixA.getSubMatrix(0, 0, 2 - 1, 3 - 1);
 		assertEquals(2, subMatrix.getDimensions()[0]);
 		assertEquals(3, subMatrix.getDimensions()[1]);
 		assertEquals(3, subMatrix.get(0, 0), 0.001);
 		assertEquals(0, subMatrix.get(1, 1), 0.001);
 		assertEquals(4, subMatrix.get(1, 2), 0.001);
+	}
+
+	@Test
+	public void testDeterminant() throws Exception
+	{
+
 	}
 
 }

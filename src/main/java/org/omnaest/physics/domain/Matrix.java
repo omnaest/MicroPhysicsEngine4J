@@ -18,10 +18,19 @@
 */
 package org.omnaest.physics.domain;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Locale;
 
+/**
+ * @see Vector
+ * @see #builder()
+ * @author Omnaest
+ */
 public class Matrix
 {
+	protected static final Matrix NULL = new Matrix(new double[0][0]);
+
 	private double[][] data;
 
 	public Matrix(double[]... data)
@@ -118,17 +127,162 @@ public class Matrix
 		return sb.toString();
 	}
 
-	public Matrix getSubMatrix(int dimensionX, int dimensionY)
+	public Matrix getSubMatrix(int x1, int y1, int x2, int y2)
 	{
-		double[][] data2 = new double[dimensionY][dimensionX];
-		for (int y = 0; y < data2.length; y++)
+		double[][] data2 = new double[y2 - y1 + 1][x2 - x1 + 1];
+		for (int y = y1; y <= y2; y++)
 		{
-			for (int x = 0; x < data2[y].length; x++)
+			for (int x = x1; x <= x2; x++)
 			{
-				data2[y][x] = this.get(x, y);
+				data2[y - y1][x - x1] = this.get(x, y);
 			}
 		}
 		return new Matrix(data2);
+	}
+
+	protected Matrix getSubMatrixModulo(int x1, int y1, int x2, int y2)
+	{
+		int[] dimensions = this.getDimensions();
+		double[][] data2 = new double[y2 - y1 + 1][x2 - x1 + 1];
+		for (int y = y1; y <= y2; y++)
+		{
+			for (int x = x1; x <= x2; x++)
+			{
+				int xMod = x % dimensions[0];
+				int yMod = y % dimensions[1];
+				data2[y - y1][x - x1] = this.get(xMod, yMod);
+			}
+		}
+		return new Matrix(data2);
+	}
+
+	public double determinant()
+	{
+		return this.determinantOf(this);
+	}
+
+	protected double determinantOf(Matrix matrix)
+	{
+		//
+		double retval = 0.0;
+
+		//
+		int dimension = matrix.getDimensions()[0];
+		if (dimension != matrix.getDimensions()[1])
+		{
+			throw new IllegalStateException("Matrix must be square");
+		}
+		if (dimension > 2)
+		{
+			for (int ii = 0; ii < dimension; ii++)
+			{
+				double factor = matrix.get(0, ii);
+				double determinant = matrix	.getSubMatrixModulo(1, ii + 1, dimension - 1, dimension - 1 + ii)
+											.determinant();
+				retval += factor * determinant;
+			}
+		}
+		else if (dimension == 2)
+		{
+			retval = matrix.get(0, 0) * matrix.get(1, 1) - matrix.get(1, 0) * matrix.get(0, 1);
+		}
+		else
+		{
+			throw new IllegalArgumentException("Matrix dimension has to be at least 2");
+		}
+
+		//
+		return retval;
+	}
+
+	protected Matrix invert()
+	{
+		int[] dimensions = this.getDimensions();
+
+		double[][] data = new double[dimensions[0]][dimensions[1]];
+		for (int x = 0; x < dimensions[0]; x++)
+		{
+			for (int y = 0; y < dimensions[1]; y++)
+			{
+				data[x][y] = this.data[y][x];
+			}
+		}
+
+		return new Matrix(data);
+	}
+
+	public static interface Builder extends RowBuilder, ColumnBuilder
+	{
+	}
+
+	public static interface ColumnBuilder
+	{
+		ColumnBuilder addColumn(Vector vector);
+
+		ColumnBuilder addColumn(double[] values);
+
+		Matrix build();
+	}
+
+	public static interface RowBuilder
+	{
+		RowBuilder addRow(Vector vector);
+
+		RowBuilder addRow(double[] values);
+
+		Matrix build();
+	}
+
+	public static Builder builder()
+	{
+		return new Builder()
+		{
+			private List<double[]>	rows	= new ArrayList<>();
+			private List<double[]>	columns	= new ArrayList<>();
+
+			@Override
+			public Matrix build()
+			{
+				Matrix retval = Matrix.NULL;
+
+				if (!this.columns.isEmpty())
+				{
+					retval = new Matrix(this.columns.toArray(new double[0][0])).invert();
+				}
+				else if (!this.rows.isEmpty())
+				{
+					retval = new Matrix(this.rows.toArray(new double[0][0]));
+				}
+
+				return retval;
+			}
+
+			@Override
+			public RowBuilder addRow(double[] values)
+			{
+				this.rows.add(values);
+				return this;
+			}
+
+			@Override
+			public ColumnBuilder addColumn(double[] values)
+			{
+				this.columns.add(values);
+				return this;
+			}
+
+			@Override
+			public RowBuilder addRow(Vector vector)
+			{
+				return this.addRow(vector.getCoordinates());
+			}
+
+			@Override
+			public ColumnBuilder addColumn(Vector vector)
+			{
+				return this.addColumn(vector.getCoordinates());
+			}
+		};
 	}
 
 }

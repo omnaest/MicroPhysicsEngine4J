@@ -102,6 +102,25 @@ public class Vector
 		return retval;
 	}
 
+	public Vector multiplyCross(Vector vector)
+	{
+		int dimension = Math.max(this.getDimension(), vector.getDimension());
+		double[] values = new double[dimension];
+		for (int ii = 0; ii < dimension; ii++)
+		{
+			double[] identityCoordinates = new double[dimension];
+			identityCoordinates[ii] = 1.0;
+			Vector identityVector = new Vector(identityCoordinates);
+			values[ii] = Matrix	.builder()
+								.addColumn(identityVector)
+								.addColumn(this)
+								.addColumn(vector)
+								.build()
+								.determinant();
+		}
+		return new Vector(values);
+	}
+
 	public double absolute()
 	{
 		return Math.sqrt(this.multiplyScalar(this));
@@ -156,7 +175,7 @@ public class Vector
 		return this	.getRotationMatrixXY(angleZ)
 					.multiply(this.getRotationMatrixXZ(angleY))
 					.multiply(this.getRotationMatrixYZ(angleX))
-					.getSubMatrix(dimension, dimension)
+					.getSubMatrix(0, 0, dimension - 1, dimension - 1)
 					.multiply(this);
 	}
 

@@ -38,4 +38,13 @@ public class VectorTest
 						0.0001);
 	}
 
+	@Test
+	public void testMultiplyCross() throws Exception
+	{
+		Vector cross = new Vector(1, 2, 3).multiplyCross(new Vector(-7, 8, 9));
+		assertEquals(-6.0, cross.getX(), 0.001);
+		assertEquals(-30.0, cross.getY(), 0.001);
+		assertEquals(22.0, cross.getZ(), 0.001);
+	}
+
 }
