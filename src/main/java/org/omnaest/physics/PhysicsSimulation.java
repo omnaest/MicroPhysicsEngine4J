@@ -32,9 +32,9 @@ import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 import java.util.stream.Collectors;
 
-import org.omnaest.physics.domain.ForceProvider;
 import org.omnaest.physics.domain.Particle;
-import org.omnaest.physics.force.utils.DurationCapture;
+import org.omnaest.physics.domain.force.ForceProvider;
+import org.omnaest.physics.domain.force.utils.DurationCapture;
 import org.omnaest.vector.Vector;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

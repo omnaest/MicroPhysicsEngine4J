@@ -16,14 +16,13 @@
 
 
 */
-package org.omnaest.physics.force;
+package org.omnaest.physics.domain.force;
 
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-import org.omnaest.physics.domain.ForceProvider;
 import org.omnaest.physics.domain.Particle;
 import org.omnaest.vector.Vector;
 

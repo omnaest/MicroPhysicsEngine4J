@@ -1,4 +1,4 @@
-package org.omnaest.physics.force.utils;
+package org.omnaest.physics.domain.force.utils;
 
 public class DurationCapture
 {
