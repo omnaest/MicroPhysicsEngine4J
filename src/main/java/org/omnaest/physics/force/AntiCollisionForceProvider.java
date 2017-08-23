@@ -25,7 +25,7 @@ import java.util.stream.Collectors;
 
 import org.omnaest.physics.domain.ForceProvider;
 import org.omnaest.physics.domain.Particle;
-import org.omnaest.physics.domain.Vector;
+import org.omnaest.vector.Vector;
 
 public class AntiCollisionForceProvider implements ForceProvider
 {

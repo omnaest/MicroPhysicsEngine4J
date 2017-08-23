@@ -36,7 +36,6 @@ import org.junit.Before;
 import org.junit.Test;
 import org.omnaest.physics.PhysicsSimulation.Runner;
 import org.omnaest.physics.domain.Particle;
-import org.omnaest.physics.domain.Vector;
 import org.omnaest.physics.force.DistanceForceProvider;
 import org.omnaest.physics.force.MinimalDistanceForceProvider;
 import org.omnaest.physics.force.MinimalPointDistanceForceProvider;
@@ -46,6 +45,7 @@ import org.omnaest.svg.SVGDrawer;
 import org.omnaest.svg.SVGUtils;
 import org.omnaest.svg.elements.SVGCircle;
 import org.omnaest.svg.elements.SVGLine;
+import org.omnaest.vector.Vector;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

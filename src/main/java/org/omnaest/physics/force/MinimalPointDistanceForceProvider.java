@@ -20,7 +20,7 @@ package org.omnaest.physics.force;
 
 import org.omnaest.physics.domain.ForceProvider;
 import org.omnaest.physics.domain.Particle;
-import org.omnaest.physics.domain.Vector;
+import org.omnaest.vector.Vector;
 
 public class MinimalPointDistanceForceProvider implements ForceProvider
 {

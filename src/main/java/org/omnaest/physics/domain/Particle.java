@@ -20,6 +20,8 @@ package org.omnaest.physics.domain;
 
 import java.util.concurrent.atomic.AtomicReference;
 
+import org.omnaest.vector.Vector;
+
 public class Particle
 {
 	private AtomicReference<Vector> location = new AtomicReference<>();

@@ -1,5 +1,7 @@
 package org.omnaest.physics.domain;
 
+import org.omnaest.vector.Vector;
+
 public interface ForceProvider
 {
 

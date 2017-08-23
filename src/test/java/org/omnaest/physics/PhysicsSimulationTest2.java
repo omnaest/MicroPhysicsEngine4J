@@ -28,7 +28,6 @@ import java.util.concurrent.atomic.AtomicInteger;
 import org.junit.Test;
 import org.omnaest.physics.PhysicsSimulation.Runner;
 import org.omnaest.physics.domain.Particle;
-import org.omnaest.physics.domain.Vector;
 import org.omnaest.physics.force.AntiCollisionForceProvider;
 import org.omnaest.physics.force.DistanceForceProvider;
 import org.omnaest.physics.force.PointForceProvider;
@@ -37,6 +36,7 @@ import org.omnaest.svg.SVGDrawer;
 import org.omnaest.svg.SVGUtils;
 import org.omnaest.svg.elements.SVGCircle;
 import org.omnaest.svg.elements.SVGLine;
+import org.omnaest.vector.Vector;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
