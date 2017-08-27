@@ -21,26 +21,23 @@ package org.omnaest.physics.domain.force;
 import org.omnaest.physics.domain.Particle;
 import org.omnaest.vector.Vector;
 
-public class MinimalPointDistanceForceProvider implements ForceProvider
+/**
+ * Similar to {@link CenterForceProvider} with the central coordinates
+ *
+ * @see CenterForceProvider
+ * @author Omnaest
+ */
+public class CenterForceProvider extends PointForceProvider
 {
-	private ForceProvider forceProvider;
-
-	public MinimalPointDistanceForceProvider(Particle particle, double minimumDistance, double... coordinates)
+	public CenterForceProvider(int dimensions)
 	{
-		super();
-		this.forceProvider = new MinimalDistanceForceProvider(particle, new Particle(coordinates.length).setLocation(new Vector(coordinates)), minimumDistance);
+		super(Vector.NULL	.asVectorWithDimension(dimensions)
+							.getCoordinates());
 	}
 
-	@Override
-	public boolean match(Particle particle)
+	public CenterForceProvider(Particle particle, int dimensions)
 	{
-		return this.forceProvider.match(particle);
+		super(particle, Vector.NULL	.asVectorWithDimension(dimensions)
+									.getCoordinates());
 	}
-
-	@Override
-	public Vector getForce(Particle particle)
-	{
-		return this.forceProvider.getForce(particle);
-	}
-
 }

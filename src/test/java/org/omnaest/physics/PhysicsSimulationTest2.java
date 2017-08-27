@@ -64,11 +64,11 @@ public class PhysicsSimulationTest2
 
 			if (timeTick % 1000 == 0)
 			{
-				Particle particleIn1 = new Particle();
-				Particle particleIn2 = new Particle();
-				Particle particleOut1 = new Particle();
-				Particle particleOut2 = new Particle();
-				Particle center = new Particle();
+				Particle particleIn1 = new Particle(2);
+				Particle particleIn2 = new Particle(2);
+				Particle particleOut1 = new Particle(2);
+				Particle particleOut2 = new Particle(2);
+				Particle center = new Particle(2);
 				simulation.addParticle(particleIn1);
 				simulation.addParticle(particleIn2);
 				simulation.addParticle(particleOut1);

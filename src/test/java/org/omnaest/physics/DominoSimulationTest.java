@@ -165,7 +165,7 @@ public class DominoSimulationTest
 		this.particles	.keySet()
 						.forEach(particle ->
 						{
-							simulation.addForceProvider(new MinimalPointDistanceForceProvider(particle, 0, 0, 500));
+							simulation.addForceProvider(new MinimalPointDistanceForceProvider(particle, 500, 0, 0));
 						});
 
 		//
@@ -234,7 +234,7 @@ public class DominoSimulationTest
 	{
 		for (int ii = 0; ii < 100; ii++)
 		{
-			this.particles.put(new Particle(), new HashSet<>());
+			this.particles.put(new Particle(2), new HashSet<>());
 		}
 	}
 

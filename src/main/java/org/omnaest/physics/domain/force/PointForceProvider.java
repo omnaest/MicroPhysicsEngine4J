@@ -27,16 +27,16 @@ public class PointForceProvider implements ForceProvider
 	private Vector		location;
 	protected double	strength	= 0.9;
 
-	public PointForceProvider(double x, double y)
+	public PointForceProvider(double... coordinates)
 	{
-		this(null, x, y);
+		this(null, coordinates);
 	}
 
-	public PointForceProvider(Particle particle, double x, double y)
+	public PointForceProvider(Particle particle, double... coordinates)
 	{
 		super();
 		this.particle = particle;
-		this.location = new Vector(x, y);
+		this.location = new Vector(coordinates);
 	}
 
 	public PointForceProvider setStrength(double strength)

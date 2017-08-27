@@ -68,11 +68,10 @@ public class DistanceForceProvider implements ForceProvider
 			delta = new Vector(Math.random(), Math.random()).divide(this.strength);
 		}
 		delta = delta.multiply(particle == this.particle1 ? -1.0 : 1.0);
-		double distanceToDistance = this.distance - delta.absolute();
+		double distanceToDistance = -1 * (this.distance - delta.absolute());
 		Vector force = delta.normVector()
 							.multiply(distanceToDistance)
-							.multiply(this.strength)
-							.multiply(-1);
+							.multiply(this.strength);
 		return force;
 	}
 }

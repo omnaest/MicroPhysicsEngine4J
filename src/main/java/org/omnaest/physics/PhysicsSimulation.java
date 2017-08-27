@@ -48,7 +48,7 @@ public class PhysicsSimulation
 	private static final Logger LOG = LoggerFactory.getLogger(PhysicsSimulation.class);
 
 	private Set<Particle>		particles		= new LinkedHashSet<>();
-	private List<ForceProvider>	forceProviders	= new ArrayList<>();
+	private Set<ForceProvider>	forceProviders	= new LinkedHashSet<>();
 
 	public PhysicsSimulation addParticle(Particle particle)
 	{
@@ -81,7 +81,8 @@ public class PhysicsSimulation
 
 	public List<ForceProvider> getForceProviders()
 	{
-		return this.forceProviders;
+		return this.forceProviders	.stream()
+									.collect(Collectors.toList());
 	}
 
 	public void tick()

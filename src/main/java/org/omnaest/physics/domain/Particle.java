@@ -18,18 +18,31 @@
 */
 package org.omnaest.physics.domain;
 
+import java.util.Collection;
 import java.util.concurrent.atomic.AtomicReference;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
+import org.apache.commons.lang.ArrayUtils;
 import org.omnaest.vector.Vector;
 
 public class Particle
 {
 	private AtomicReference<Vector> location = new AtomicReference<>();
 
-	public Particle()
+	public Particle(int dimensions)
+	{
+		this(new Vector(ArrayUtils.toPrimitive(IntStream.range(0, dimensions)
+														.mapToObj(value -> Math.random())
+														.collect(Collectors.toList())
+														.toArray(new Double[0]))));
+
+	}
+
+	protected Particle(Vector location)
 	{
 		super();
-		this.location.set(new Vector(Math.random(), Math.random()));
+		this.location.set(location);
 	}
 
 	public Vector getLocation()
@@ -50,4 +63,13 @@ public class Particle
 		return this;
 	}
 
+	public static Particle newAverageParticle(Collection<Particle> particles)
+	{
+		Vector location = particles	.stream()
+									.map(particle -> particle.getLocation())
+									.reduce((l1, l2) -> l1	.add(l2)
+															.divide(2))
+									.orElse(Vector.NULL);
+		return new Particle(location);
+	}
 }

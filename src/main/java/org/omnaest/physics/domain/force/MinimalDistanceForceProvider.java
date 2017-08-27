@@ -18,22 +18,29 @@
 */
 package org.omnaest.physics.domain.force;
 
+import java.util.function.Supplier;
+
 import org.omnaest.physics.domain.Particle;
 import org.omnaest.vector.Vector;
 
 public class MinimalDistanceForceProvider implements ForceProvider
 {
-	private Particle	particle1;
-	private Particle	particle2;
-	private double		distance;
-	protected double	strength	= 100.0;
+	private Particle			particle1;
+	private Particle			particle2;
+	private Supplier<Double>	distanceSupplier;
+	protected double			strength	= 100.0;
 
 	public MinimalDistanceForceProvider(Particle particle1, Particle particle2, double distance)
+	{
+		this(particle1, particle2, () -> distance);
+	}
+
+	public MinimalDistanceForceProvider(Particle particle1, Particle particle2, Supplier<Double> distanceSupplier)
 	{
 		super();
 		this.particle1 = particle1;
 		this.particle2 = particle2;
-		this.distance = distance;
+		this.distanceSupplier = distanceSupplier;
 	}
 
 	public MinimalDistanceForceProvider setStrength(double strength)
@@ -63,22 +70,24 @@ public class MinimalDistanceForceProvider implements ForceProvider
 	{
 		Vector delta = this.particle1	.getLocation()
 										.subtract(this.particle2.getLocation());
+		final double distance = this.distanceSupplier.get();
+
 		if (delta.absolute() <= 0.001)
 		{
 			delta = new Vector(Math.random(), Math.random());
 		}
 		delta = delta.multiply(particle == this.particle1 ? -1.0 : 1.0);
-		double absoluteDistanceDelta = this.distance - delta.absolute();
+		double absoluteDistanceDelta = distance - delta.absolute();
 		double multiplier = this.strength;
 
-		if (delta.absolute() > this.distance)
+		if (delta.absolute() > distance)
 		{
 			multiplier = 0.0;
 		}
 
 		Vector force = delta.normVector()
 							.multiply(absoluteDistanceDelta)
-							.multiply(multiplier) //50
+							.multiply(multiplier)
 							.multiply(-1);
 		return force;
 	}
