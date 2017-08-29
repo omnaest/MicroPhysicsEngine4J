@@ -32,11 +32,15 @@ public class PointForceProvider implements ForceProvider
 		this(null, coordinates);
 	}
 
+	public PointForceProvider(Particle particle, Vector location)
+	{
+		this.particle = particle;
+		this.location = location;
+	}
+
 	public PointForceProvider(Particle particle, double... coordinates)
 	{
-		super();
-		this.particle = particle;
-		this.location = new Vector(coordinates);
+		this(particle, new Vector(coordinates));
 	}
 
 	public PointForceProvider setStrength(double strength)
