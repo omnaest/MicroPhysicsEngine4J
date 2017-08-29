@@ -72,4 +72,11 @@ public class Particle
 									.orElse(Vector.NULL);
 		return new Particle(location);
 	}
+
+	@Override
+	public String toString()
+	{
+		return "Particle [location=" + this.location + "]";
+	}
+
 }

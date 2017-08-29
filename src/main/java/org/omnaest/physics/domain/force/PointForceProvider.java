@@ -23,8 +23,8 @@ import org.omnaest.vector.Vector;
 
 public class PointForceProvider implements ForceProvider
 {
-	private Particle	particle;
-	private Vector		location;
+	protected Particle	particle;
+	protected Vector	location;
 	protected double	strength	= 0.9;
 
 	public PointForceProvider(double... coordinates)
@@ -82,4 +82,11 @@ public class PointForceProvider implements ForceProvider
 							.multiply(this.strength);
 		return force;
 	}
+
+	@Override
+	public String toString()
+	{
+		return "PointForceProvider [particle=" + this.particle + ", location=" + this.location + ", strength=" + this.strength + "]";
+	}
+
 }

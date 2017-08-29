@@ -91,4 +91,12 @@ public class MinimalDistanceForceProvider implements ForceProvider
 							.multiply(-1);
 		return force;
 	}
+
+	@Override
+	public String toString()
+	{
+		return "MinimalDistanceForceProvider [particle1=" + this.particle1 + ", particle2=" + this.particle2 + ", distanceSupplier="
+				+ this.distanceSupplier.get() + ", strength=" + this.strength + "]";
+	}
+
 }

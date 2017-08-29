@@ -43,4 +43,10 @@ public class MinimalPointDistanceForceProvider implements ForceProvider
 		return this.forceProvider.getForce(particle);
 	}
 
+	@Override
+	public String toString()
+	{
+		return "MinimalPointDistanceForceProvider [forceProvider=" + this.forceProvider + "]";
+	}
+
 }

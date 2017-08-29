@@ -19,6 +19,7 @@
 package org.omnaest.physics;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.LinkedHashSet;
 import java.util.List;
@@ -62,6 +63,12 @@ public class PhysicsSimulation
 		return this;
 	}
 
+	public PhysicsSimulation removeParticles(Set<Particle> particles)
+	{
+		this.particles.removeAll(particles);
+		return this;
+	}
+
 	public PhysicsSimulation addForceProvider(ForceProvider forceProvider)
 	{
 		this.forceProviders.add(forceProvider);
@@ -71,6 +78,17 @@ public class PhysicsSimulation
 	public PhysicsSimulation addForceProviders(Collection<? extends ForceProvider> forceProviders)
 	{
 		this.forceProviders.addAll(forceProviders);
+		return this;
+	}
+
+	public PhysicsSimulation removeForceProviders(ForceProvider... forceProviders)
+	{
+		return this.removeForceProviders(Arrays.asList(forceProviders));
+	}
+
+	public PhysicsSimulation removeForceProviders(Collection<ForceProvider> forceProviders)
+	{
+		this.forceProviders.removeAll(forceProviders);
 		return this;
 	}
 

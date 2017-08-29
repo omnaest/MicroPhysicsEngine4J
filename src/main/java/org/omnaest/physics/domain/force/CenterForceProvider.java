@@ -40,4 +40,11 @@ public class CenterForceProvider extends PointForceProvider
 		super(particle, Vector.NULL	.asVectorWithDimension(dimensions)
 									.getCoordinates());
 	}
+
+	@Override
+	public String toString()
+	{
+		return "CenterForceProvider [particle=" + this.particle + ", location=" + this.location + ", strength=" + this.strength + "]";
+	}
+
 }

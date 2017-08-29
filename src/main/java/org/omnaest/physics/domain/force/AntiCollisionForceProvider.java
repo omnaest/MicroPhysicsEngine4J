@@ -95,4 +95,12 @@ public class AntiCollisionForceProvider implements ForceProvider
 										.collect(Collectors.toSet());
 		return this;
 	}
+
+	@Override
+	public String toString()
+	{
+		return "AntiCollisionForceProvider [particle=" + this.particle + ", strength=" + this.strength + ", collisionDistance=" + this.collisionDistance
+				+ ", exclusionParticles=" + this.exclusionParticles + "]";
+	}
+
 }

@@ -74,4 +74,12 @@ public class DistanceForceProvider implements ForceProvider
 							.multiply(this.strength);
 		return force;
 	}
+
+	@Override
+	public String toString()
+	{
+		return "DistanceForceProvider [particle1=" + this.particle1 + ", particle2=" + this.particle2 + ", distance=" + this.distance + ", strength="
+				+ this.strength + "]";
+	}
+
 }
