@@ -174,11 +174,11 @@ public class PhysicsSimulationTest2
 																					.getLocation()
 																					.add(origin);
 
-										int collisionDistance = antiCollisionForceProvider.getCollisionDistance();
+										double collisionDistance = antiCollisionForceProvider.getCollisionDistance();
 
 										int x = (int) location.getX();
 										int y = (int) location.getY();
-										int r = collisionDistance;
+										int r = (int) collisionDistance;
 										drawer.add(new SVGCircle(x, y, r)	.setStrokeColor("purple")
 																			.setFillOpacity(0.1));
 									}
@@ -189,7 +189,8 @@ public class PhysicsSimulationTest2
 				{
 					drawer	.renderAsResult()
 							.writeToFile(new File("C:/Temp/particles.svg"));
-				} catch (Exception e)
+				}
+				catch (Exception e)
 				{
 					LOG.error("", e);
 				}

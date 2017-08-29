@@ -29,6 +29,11 @@ import org.omnaest.vector.Vector;
  */
 public class CenterForceProvider extends PointForceProvider
 {
+	public CenterForceProvider()
+	{
+		this(3);
+	}
+
 	public CenterForceProvider(int dimensions)
 	{
 		super(Vector.NULL	.asVectorWithDimension(dimensions)

@@ -29,11 +29,11 @@ import org.omnaest.vector.Vector;
 public class AntiCollisionForceProvider implements ForceProvider
 {
 	private Particle		particle;
-	protected double		strength			= 100;
-	private int				collisionDistance;
+	protected double		strength			= 1000000000;
+	private double			collisionDistance;
 	private Set<Particle>	exclusionParticles	= Collections.emptySet();
 
-	public AntiCollisionForceProvider(Particle particle, int collisionDistance)
+	public AntiCollisionForceProvider(Particle particle, double collisionDistance)
 	{
 		super();
 		this.particle = particle;
@@ -41,7 +41,7 @@ public class AntiCollisionForceProvider implements ForceProvider
 
 	}
 
-	public int getCollisionDistance()
+	public double getCollisionDistance()
 	{
 		return this.collisionDistance;
 	}
