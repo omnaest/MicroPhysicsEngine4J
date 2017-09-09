@@ -18,14 +18,22 @@
 */
 package org.omnaest.physics.domain.force;
 
+import java.util.function.Supplier;
+
 import org.omnaest.physics.domain.Particle;
 import org.omnaest.vector.Vector;
 
+/**
+ * @see #setMass(double)
+ * @see #setStrength(double)
+ * @author omnaest
+ */
 public class PointForceProvider implements ForceProvider
 {
-	protected Particle	particle;
-	protected Vector	location;
-	protected double	strength	= 0.9;
+	protected Particle			particle;
+	protected Vector			location;
+	protected Supplier<Double>	strength	= () -> 0.9;
+	protected Supplier<Double>	mass		= () -> 1.0;
 
 	public PointForceProvider(double... coordinates)
 	{
@@ -43,9 +51,27 @@ public class PointForceProvider implements ForceProvider
 		this(particle, new Vector(coordinates));
 	}
 
-	public PointForceProvider setStrength(double strength)
+	public PointForceProvider setStrength(Supplier<Double> strength)
 	{
 		this.strength = strength;
+		return this;
+	}
+
+	public PointForceProvider setStrength(double strength)
+	{
+		this.strength = () -> strength;
+		return this;
+	}
+
+	public PointForceProvider setMass(Supplier<Double> mass)
+	{
+		this.mass = mass;
+		return this;
+	}
+
+	public PointForceProvider setMass(double mass)
+	{
+		this.mass = () -> mass;
 		return this;
 	}
 
@@ -83,7 +109,7 @@ public class PointForceProvider implements ForceProvider
 		delta = delta.multiply(-1.0);
 		Vector force = delta.normVector()
 							.multiply(delta.absolute() * delta.absolute())
-							.multiply(this.strength);
+							.multiply(this.strength.get() * this.mass.get());
 		return force;
 	}
 
