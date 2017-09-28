@@ -19,6 +19,7 @@
 package org.omnaest.physics.domain.force;
 
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -89,10 +90,13 @@ public class AntiCollisionForceProvider implements ForceProvider
 
 	public AntiCollisionForceProvider setExclusionParticles(Particle... exclusionParticles)
 	{
+		return this.setExclusionParticles(Arrays.asList(exclusionParticles));
+	}
 
-		this.exclusionParticles = Arrays.asList(exclusionParticles)
-										.stream()
-										.collect(Collectors.toSet());
+	public AntiCollisionForceProvider setExclusionParticles(Collection<Particle> exclusionParticles)
+	{
+		this.exclusionParticles = exclusionParticles.stream()
+													.collect(Collectors.toSet());
 		return this;
 	}
 

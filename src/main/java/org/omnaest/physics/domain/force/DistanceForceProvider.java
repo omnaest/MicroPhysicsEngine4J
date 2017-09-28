@@ -26,7 +26,8 @@ public class DistanceForceProvider implements ForceProvider
 	private Particle	particle1;
 	private Particle	particle2;
 	private double		distance;
-	protected double	strength	= 1000.0;
+	protected double	strength			= 1000.0;
+	private Particle	excludedParticle	= null;
 
 	public DistanceForceProvider(Particle particle1, Particle particle2, double distance)
 	{
@@ -55,7 +56,8 @@ public class DistanceForceProvider implements ForceProvider
 	@Override
 	public boolean match(Particle particle)
 	{
-		return particle.equals(this.particle1) || particle.equals(this.particle2);
+		return (particle.equals(this.particle1) || particle.equals(this.particle2))
+				&& !(this.excludedParticle != null && this.excludedParticle.equals(particle));
 	}
 
 	@Override
@@ -80,6 +82,12 @@ public class DistanceForceProvider implements ForceProvider
 	{
 		return "DistanceForceProvider [particle1=" + this.particle1 + ", particle2=" + this.particle2 + ", distance=" + this.distance + ", strength="
 				+ this.strength + "]";
+	}
+
+	public DistanceForceProvider setExclusionParticle(Particle excludedParticle)
+	{
+		this.excludedParticle = excludedParticle;
+		return this;
 	}
 
 }
