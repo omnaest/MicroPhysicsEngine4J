@@ -236,8 +236,7 @@ public class PhysicsSimulation
 							}
 							this.durationInMilliseconds = tickDurationCapture.stop();
 							fps.set((1000.0 / this.durationInMilliseconds));
-						}
-						finally
+						} finally
 						{
 							lock.unlock();
 							executorService.submit(this);
@@ -259,12 +258,10 @@ public class PhysicsSimulation
 							try
 							{
 								timeTickHandler.handle(this.timeTicker.getAndIncrement(), PhysicsSimulation.this);
-							}
-							catch (Exception e)
+							} catch (Exception e)
 							{
 								LOG.error("Error during time tick handler execution", e);
-							}
-							finally
+							} finally
 							{
 								lock.unlock();
 							}
@@ -274,8 +271,7 @@ public class PhysicsSimulation
 							{
 								Thread.sleep(1);
 								executorService.submit(this);
-							}
-							catch (InterruptedException e)
+							} catch (InterruptedException e)
 							{
 							}
 						}
@@ -291,8 +287,7 @@ public class PhysicsSimulation
 				{
 					this.executorService.shutdown();
 					this.executorService.awaitTermination(2, TimeUnit.SECONDS);
-				}
-				catch (InterruptedException e)
+				} catch (InterruptedException e)
 				{
 				}
 				return this;
@@ -307,8 +302,7 @@ public class PhysicsSimulation
 					try
 					{
 						notTerminated = !this.executorService.awaitTermination(1, TimeUnit.SECONDS);
-					}
-					catch (InterruptedException e)
+					} catch (InterruptedException e)
 					{
 					}
 				}
@@ -337,5 +331,11 @@ public class PhysicsSimulation
 									.map(forceProvider -> forceProvider.getForce(particle))
 									.reduce((f1, f2) -> f1.add(f2))
 									.orElse(Vector.NULL);
+	}
+
+	public void reset()
+	{
+		this.particles.clear();
+		this.forceProviders.clear();
 	}
 }
