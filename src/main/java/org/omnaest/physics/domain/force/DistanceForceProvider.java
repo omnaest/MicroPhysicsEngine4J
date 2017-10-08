@@ -90,4 +90,10 @@ public class DistanceForceProvider implements ForceProvider
 		return this;
 	}
 
+	@Override
+	public Type getType()
+	{
+		return Type.SPECIFIC;
+	}
+
 }

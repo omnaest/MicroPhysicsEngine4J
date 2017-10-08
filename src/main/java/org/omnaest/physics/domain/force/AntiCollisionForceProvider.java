@@ -33,13 +33,25 @@ public class AntiCollisionForceProvider implements ForceProvider
 	protected double		strength			= 1000000000;
 	private double			collisionDistance;
 	private Set<Particle>	exclusionParticles	= Collections.emptySet();
+	private Set<Particle>	inclusionParticles	= null;
 
 	public AntiCollisionForceProvider(Particle particle, double collisionDistance)
 	{
 		super();
 		this.particle = particle;
 		this.collisionDistance = collisionDistance;
+	}
 
+	@Override
+	public Type getType()
+	{
+		return this.inclusionParticles == null ? Type.ALL_MATCHING : Type.SPECIFIC;
+	}
+
+	public AntiCollisionForceProvider setInclusionParticles(Set<Particle> inclusionParticles)
+	{
+		this.inclusionParticles = inclusionParticles;
+		return this;
 	}
 
 	public double getCollisionDistance()
@@ -61,7 +73,8 @@ public class AntiCollisionForceProvider implements ForceProvider
 	@Override
 	public boolean match(Particle particle)
 	{
-		return !this.particle.equals(particle) && !this.exclusionParticles.contains(particle);
+		return !this.particle.equals(particle) && !this.exclusionParticles.contains(particle)
+				&& (this.inclusionParticles == null || this.inclusionParticles != null && this.inclusionParticles.contains(particle));
 	}
 
 	@Override

@@ -32,6 +32,12 @@ public class MinimalPointDistanceForceProvider implements ForceProvider
 	}
 
 	@Override
+	public Type getType()
+	{
+		return Type.SPECIFIC;
+	}
+
+	@Override
 	public boolean match(Particle particle)
 	{
 		return this.forceProvider.match(particle);

@@ -23,6 +23,7 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -33,8 +34,10 @@ import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 import java.util.stream.Collectors;
 
+import org.omnaest.physics.component.CallOptimizingForceProviderManager;
 import org.omnaest.physics.domain.Particle;
 import org.omnaest.physics.domain.force.ForceProvider;
+import org.omnaest.physics.domain.force.ForceProvider.Type;
 import org.omnaest.physics.domain.force.utils.DurationCapture;
 import org.omnaest.vector.Vector;
 import org.slf4j.Logger;
@@ -48,8 +51,12 @@ public class PhysicsSimulation
 {
 	private static final Logger LOG = LoggerFactory.getLogger(PhysicsSimulation.class);
 
+	private double cpuUseFactor = 1.0;
+
 	private Set<Particle>		particles		= new LinkedHashSet<>();
 	private Set<ForceProvider>	forceProviders	= new LinkedHashSet<>();
+
+	private CallOptimizingForceProviderManager optimizingForceProviderManager = new CallOptimizingForceProviderManager();
 
 	public PhysicsSimulation addParticle(Particle particle)
 	{
@@ -71,13 +78,16 @@ public class PhysicsSimulation
 
 	public PhysicsSimulation addForceProvider(ForceProvider forceProvider)
 	{
-		this.forceProviders.add(forceProvider);
+		this.forceProviders.add(this.optimizingForceProviderManager.wrap(forceProvider));
 		return this;
 	}
 
 	public PhysicsSimulation addForceProviders(Collection<? extends ForceProvider> forceProviders)
 	{
-		this.forceProviders.addAll(forceProviders);
+		if (forceProviders != null)
+		{
+			forceProviders.forEach(this::addForceProvider);
+		}
 		return this;
 	}
 
@@ -114,16 +124,15 @@ public class PhysicsSimulation
 						.parallel()
 						.forEach(particle ->
 						{
-							Set<ForceProvider> matchedForceProviders = this.forceProviders	.stream()
-																							.filter(forceProvider -> forceProvider.match(particle))
-																							.collect(Collectors.toSet());
-
-							this.applyForce(particle, matchedForceProviders, deltaT);
+							this.applyForce(particle, deltaT);
 						});
 	}
 
-	private void applyForce(Particle particle, Set<ForceProvider> forceProviders, double deltaT)
+	private void applyForce(Particle particle, double deltaT)
 	{
+		//
+		Map<Type, List<ForceProvider>> matchingForceProviders = this.optimizingForceProviderManager.calculateMatchingForceProviders(this.forceProviders,
+																																	particle);
 
 		//
 		double passedTime = 0.0;
@@ -132,10 +141,7 @@ public class PhysicsSimulation
 		while (passedTime < deltaT * 0.9999 && depth < maxDepth)
 		{
 			//
-			Vector force = forceProviders	.stream()
-											.map(forceProvider -> forceProvider.getForce(particle))
-											.reduce((f1, f2) -> f1.add(f2))
-											.get();
+			Vector force = this.optimizingForceProviderManager.calculateForce(matchingForceProviders, particle);
 
 			//identify timeScale
 			double timeScale = deltaT - passedTime;
@@ -201,11 +207,20 @@ public class PhysicsSimulation
 	{
 		return new Runner()
 		{
-			private ExecutorService			executorService	= Executors.newCachedThreadPool();
+			private ExecutorService executorService = this.newExecutorService();
+
 			private TimeTickHandler			timeTickHandler	= null;
 			private Lock					lock			= new ReentrantLock(true);
 			private AtomicReference<Double>	fps				= new AtomicReference<>(0.0);
 			private double					precision;
+
+			private ExecutorService newExecutorService()
+			{
+				ExecutorService threadPool = PhysicsSimulation.this.cpuUseFactor < 0.99 ? Executors.newFixedThreadPool((int) Math.round(Runtime	.getRuntime()
+																																				.availableProcessors()
+						* PhysicsSimulation.this.cpuUseFactor)) : Executors.newCachedThreadPool();
+				return threadPool;
+			}
 
 			@Override
 			public Runner setTimeTickHandler(TimeTickHandler timeTickHandler)
@@ -337,5 +352,12 @@ public class PhysicsSimulation
 	{
 		this.particles.clear();
 		this.forceProviders.clear();
+	}
+
+	public PhysicsSimulation setCPUUseFactor(double cpuUseFactor)
+	{
+		this.cpuUseFactor = cpuUseFactor;
+		return this;
+
 	}
 }

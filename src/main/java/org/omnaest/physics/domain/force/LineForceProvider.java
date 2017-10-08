@@ -148,6 +148,12 @@ public class LineForceProvider implements ForceProvider
 	}
 
 	@Override
+	public Type getType()
+	{
+		return Type.SPECIFIC;
+	}
+
+	@Override
 	public String toString()
 	{
 		return "LineForceProvider [particles=" + this.particles + ", distance=" + this.distance + ", strength=" + this.strength + "]";

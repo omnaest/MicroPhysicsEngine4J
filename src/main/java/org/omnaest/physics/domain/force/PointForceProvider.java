@@ -34,10 +34,12 @@ public class PointForceProvider implements ForceProvider
 	protected Vector			location;
 	protected Supplier<Double>	strength	= () -> 0.9;
 	protected Supplier<Double>	mass		= () -> 1.0;
+	private Type				type		= Type.SPECIFIC;
 
 	public PointForceProvider(double... coordinates)
 	{
 		this(null, coordinates);
+		this.type = Type.ALL_MATCHING;
 	}
 
 	public PointForceProvider(Particle particle, Vector location)
@@ -49,6 +51,12 @@ public class PointForceProvider implements ForceProvider
 	public PointForceProvider(Particle particle, double... coordinates)
 	{
 		this(particle, new Vector(coordinates));
+	}
+
+	@Override
+	public Type getType()
+	{
+		return this.type;
 	}
 
 	public PointForceProvider setStrength(Supplier<Double> strength)

@@ -43,6 +43,12 @@ public class MinimalDistanceForceProvider implements ForceProvider
 		this.distanceSupplier = distanceSupplier;
 	}
 
+	@Override
+	public Type getType()
+	{
+		return Type.SPECIFIC;
+	}
+
 	public MinimalDistanceForceProvider setStrength(double strength)
 	{
 		this.strength = strength;
