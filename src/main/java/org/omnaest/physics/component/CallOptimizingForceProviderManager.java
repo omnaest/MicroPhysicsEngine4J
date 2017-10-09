@@ -27,7 +27,6 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 
-import org.apache.commons.lang.ObjectUtils;
 import org.omnaest.physics.domain.Particle;
 import org.omnaest.physics.domain.force.ForceProvider;
 import org.omnaest.physics.domain.force.ForceProvider.Type;
@@ -80,19 +79,6 @@ public class CallOptimizingForceProviderManager
 				return forceProvider.getType();
 			}
 
-			@Override
-			public boolean equals(Object obj)
-			{
-				return forceProvider.equals(obj) || ObjectUtils	.identityToString(this)
-																.equals(ObjectUtils.identityToString(obj));
-			}
-
-			@Override
-			public int hashCode()
-			{
-				return forceProvider.hashCode();
-			}
-
 		};
 	}
 
@@ -120,7 +106,7 @@ public class CallOptimizingForceProviderManager
 		int callCountForInverseType = typeToCallCounter	.get(type.inverse())
 														.get();
 		boolean hasBothTypes = callCountForType > 0 && callCountForInverseType > 0;
-		return hasBothTypes && callCountForType > callCountForInverseType * 10;
+		return hasBothTypes && callCountForType > callCountForInverseType * 100;
 	}
 
 	public Vector calculateForce(Map<Type, List<ForceProvider>> forceProviders, Particle particle)

@@ -78,7 +78,7 @@ public class PhysicsSimulation
 
 	public PhysicsSimulation addForceProvider(ForceProvider forceProvider)
 	{
-		this.forceProviders.add(this.optimizingForceProviderManager.wrap(forceProvider));
+		this.forceProviders.add(forceProvider);
 		return this;
 	}
 
@@ -120,19 +120,21 @@ public class PhysicsSimulation
 
 	public void tick(double deltaT)
 	{
+		Set<ForceProvider> optimizedForceProviders = this.forceProviders.stream()
+																		.map(forceProvider -> this.optimizingForceProviderManager.wrap(forceProvider))
+																		.collect(Collectors.toSet());
 		this.particles	.stream()
 						.parallel()
 						.forEach(particle ->
 						{
-							this.applyForce(particle, deltaT);
+							this.applyForce(particle, deltaT, optimizedForceProviders);
 						});
 	}
 
-	private void applyForce(Particle particle, double deltaT)
+	private void applyForce(Particle particle, double deltaT, Set<ForceProvider> forceProviders)
 	{
 		//
-		Map<Type, List<ForceProvider>> matchingForceProviders = this.optimizingForceProviderManager.calculateMatchingForceProviders(this.forceProviders,
-																																	particle);
+		Map<Type, List<ForceProvider>> matchingForceProviders = this.optimizingForceProviderManager.calculateMatchingForceProviders(forceProviders, particle);
 
 		//
 		double passedTime = 0.0;
