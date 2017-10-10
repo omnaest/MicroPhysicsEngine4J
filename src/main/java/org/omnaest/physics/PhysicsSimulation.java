@@ -137,6 +137,18 @@ public class PhysicsSimulation
 		Map<Type, List<ForceProvider>> matchingForceProviders = this.optimizingForceProviderManager.calculateMatchingForceProviders(forceProviders, particle);
 
 		//
+		double deltaT1 = deltaT / 2;
+		double deltaT10 = deltaT1 / 10;
+
+		this.applySingleDeltaT(particle, deltaT1, matchingForceProviders);
+		for (int ii = 0; ii < 10; ii++)
+		{
+			this.applySingleDeltaT(particle, deltaT10, matchingForceProviders);
+		}
+	}
+
+	private void applySingleDeltaT(Particle particle, double deltaT, Map<Type, List<ForceProvider>> matchingForceProviders)
+	{
 		double passedTime = 0.0;
 		int depth = 0;
 		int maxDepth = 4;
@@ -167,7 +179,6 @@ public class PhysicsSimulation
 			passedTime += timeScale;
 			depth++;
 		}
-
 	}
 
 	private Vector calculateDistance(Vector force, double timeScale)
