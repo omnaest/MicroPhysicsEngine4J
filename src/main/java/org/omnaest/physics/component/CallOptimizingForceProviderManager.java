@@ -69,6 +69,11 @@ public class CallOptimizingForceProviderManager
 																										p -> CallOptimizingForceProviderManager.this.newTypeToCounterMap())
 																					.get(this.getType())
 																					.incrementAndGet();
+				CallOptimizingForceProviderManager.this.particleToTypeToCallCounter	.computeIfAbsent(	particle,
+																										p -> CallOptimizingForceProviderManager.this.newTypeToCounterMap())
+																					.get(this	.getType()
+																								.inverse())
+																					.decrementAndGet();
 
 				return force;
 			}
