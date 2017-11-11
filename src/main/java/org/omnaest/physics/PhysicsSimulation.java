@@ -39,6 +39,7 @@ import org.omnaest.physics.domain.Particle;
 import org.omnaest.physics.domain.force.ForceProvider;
 import org.omnaest.physics.domain.force.ForceProvider.Type;
 import org.omnaest.physics.domain.force.utils.DurationCapture;
+import org.omnaest.utils.ThreadUtils;
 import org.omnaest.vector.Vector;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -207,6 +208,8 @@ public class PhysicsSimulation
 		 */
 		Runner setPrecision(double precision);
 
+		Runner boost(int duration, TimeUnit timeUnit);
+
 		double getFPS();
 
 	}
@@ -226,6 +229,7 @@ public class PhysicsSimulation
 			private Lock					lock			= new ReentrantLock(true);
 			private AtomicReference<Double>	fps				= new AtomicReference<>(0.0);
 			private double					precision;
+			private double					precisionBoost	= 1.0;
 
 			private ExecutorService newExecutorService()
 			{
@@ -259,7 +263,7 @@ public class PhysicsSimulation
 						{
 							tickDurationCapture.start();
 							{
-								double timeDuration = Math.max(0.1, this.durationInMilliseconds) * precision * this.PIXEL_PER_SECOND / 1000.0;
+								double timeDuration = Math.max(0.1, this.durationInMilliseconds) * precision * precisionBoost * this.PIXEL_PER_SECOND / 1000.0;
 								PhysicsSimulation.this.tick(timeDuration);
 							}
 							this.durationInMilliseconds = tickDurationCapture.stop();
@@ -349,6 +353,30 @@ public class PhysicsSimulation
 				this.precision = precision;
 				return this;
 			}
+
+			private long boostEndTime = 0;
+
+			@Override
+			public Runner boost(int duration, TimeUnit timeUnit)
+			{
+				this.boostEndTime = System.currentTimeMillis() + timeUnit.toMillis(duration);
+				this.executorService.submit(() ->
+				{
+					LOG.info("Boost for " + timeUnit.toMillis(duration) + "ms");
+					this.precisionBoost = 100.0;
+
+					ThreadUtils.sleepSilently(duration, timeUnit);
+
+					while (System.currentTimeMillis() < this.boostEndTime)
+					{
+						ThreadUtils.sleepSilently(duration / 10, timeUnit);
+					}
+					this.precisionBoost = 1.0;
+					LOG.info("Boost ended");
+				});
+				return this;
+			}
+
 		};
 	}
 
