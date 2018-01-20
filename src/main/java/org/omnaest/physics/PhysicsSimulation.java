@@ -241,7 +241,15 @@ public class PhysicsSimulation
             this.timeDuration.add(Math.sqrt(duration));
         }
 
-        private void start()
+        public void start(int numberOfThreads)
+        {
+            for (int ii = 0; ii < numberOfThreads; ii++)
+            {
+                this.start();
+            }
+        }
+
+        public void start()
         {
             this.executorService.submit(new Runnable()
             {
@@ -269,7 +277,7 @@ public class PhysicsSimulation
             });
         }
 
-        private void stop()
+        public void stop()
         {
             this.executorService.shutdown();
             try
@@ -302,8 +310,7 @@ public class PhysicsSimulation
             private ExecutorService newExecutorService()
             {
                 int threads = this.calculateProcessorNumberToUse();
-                ExecutorService threadPool = PhysicsSimulation.this.cpuUseFactor < 0.99 ? Executors.newFixedThreadPool(threads)
-                        : Executors.newCachedThreadPool();
+                ExecutorService threadPool = Executors.newFixedThreadPool(threads);
                 return threadPool;
             }
 
@@ -324,7 +331,11 @@ public class PhysicsSimulation
             @Override
             public Runner run()
             {
-                for (int ii = 0; ii < this.calculateProcessorNumberToUse(); ii++)
+                int numberOfThreads = this.calculateProcessorNumberToUse();
+                int numberOfFastCalculationThreads = 1 + numberOfThreads * 2 / 3;
+                int numberOfSlowCalculationThreads = 1 + numberOfThreads / 3;
+
+                for (int ii = 0; ii < numberOfFastCalculationThreads; ii++)
                 {
                     this.executorService.submit(new Runnable()
                     {
@@ -341,10 +352,17 @@ public class PhysicsSimulation
                             {
                                 tickDurationCapture.start();
                                 {
-                                    double timeDuration = Math.max(0.1, this.durationInMilliseconds) * precision * precisionBoost * this.PIXEL_PER_SECOND
-                                            / 1000.0;
-                                    PhysicsSimulation.this.tick(timeDuration, ForceProvider.Type.SPECIFIC);
-                                    longRunningTicker.tickAsync(timeDuration);
+                                    if (PhysicsSimulation.this.particles.isEmpty())
+                                    {
+                                        ThreadUtils.sleepSilently(10, TimeUnit.MILLISECONDS);
+                                    }
+                                    else
+                                    {
+                                        double timeDuration = Math.max(0.1, this.durationInMilliseconds) * precision * precisionBoost * this.PIXEL_PER_SECOND
+                                                / 1000.0;
+                                        PhysicsSimulation.this.tick(timeDuration, ForceProvider.Type.SPECIFIC);
+                                        longRunningTicker.tickAsync(timeDuration);
+                                    }
                                 }
                                 this.durationInMilliseconds = tickDurationCapture.stop();
                                 fps.set((1000.0 / this.durationInMilliseconds));
@@ -359,7 +377,7 @@ public class PhysicsSimulation
                 }
 
                 //
-                this.longRunningTicker.start();
+                this.longRunningTicker.start(numberOfSlowCalculationThreads);
 
                 //
                 if (this.timeTickHandler != null)
