@@ -238,7 +238,9 @@ public class PhysicsSimulation
 
         public void tickAsync(double duration)
         {
-            this.timeDuration.add(Math.sqrt(duration));
+            double factor = 8;
+            double root = duration > 1.0 ? 1.0 / factor : factor;
+            this.timeDuration.add(Math.pow(duration, root));
         }
 
         public void start(int numberOfThreads)
