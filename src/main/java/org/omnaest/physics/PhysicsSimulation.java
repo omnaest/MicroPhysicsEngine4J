@@ -214,6 +214,8 @@ public class PhysicsSimulation
 
         double getFPS();
 
+        Runner suspend();
+
     }
 
     public static interface TimeTickHandler
@@ -304,6 +306,7 @@ public class PhysicsSimulation
             private AtomicReference<Double> fps             = new AtomicReference<>(0.0);
             private double                  precision;
             private double                  precisionBoost  = 1.0;
+            private boolean                 suspended       = false;
 
             private LongRunningTicker longRunningTicker = new LongRunningTicker(this.executorService, this.lock.readLock(),
                                                                                 timeDuration -> PhysicsSimulation.this.tick(timeDuration,
@@ -354,7 +357,7 @@ public class PhysicsSimulation
                             {
                                 tickDurationCapture.start();
                                 {
-                                    if (PhysicsSimulation.this.particles.isEmpty())
+                                    if (PhysicsSimulation.this.particles.isEmpty() || suspended)
                                     {
                                         ThreadUtils.sleepSilently(10, TimeUnit.MILLISECONDS);
                                     }
@@ -419,6 +422,13 @@ public class PhysicsSimulation
                         }
                     });
                 }
+                return this;
+            }
+
+            @Override
+            public Runner suspend()
+            {
+                this.suspended = !this.suspended;
                 return this;
             }
 
